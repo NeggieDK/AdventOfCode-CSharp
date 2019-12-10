@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode_CSharp.Day7
 {
-    enum ComputerStatus
+    public enum ComputerStatus
     {
         Running,
         Halted,

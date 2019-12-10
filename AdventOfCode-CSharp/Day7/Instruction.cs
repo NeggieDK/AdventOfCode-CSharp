@@ -20,12 +20,9 @@ namespace AdventOfCode_CSharp.Day7
         private List<int> ParsedOpcodes { get; set; }
         public void Parse(List<int> instructionList)
         {
-            if(instructionList.Count < 4)
+            while(instructionList.Count < 4)
             {
-                for(var i = 0; i < 4 - instructionList.Count; i++)
-                {
-                    instructionList.Add(0);
-                }
+                instructionList.Add(0);
             }
             parseOpcode(instructionList[0]);
             var size = ParsedOpcodes.Count;

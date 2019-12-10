@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace AdventOfCode_CSharp.Day7
 {
-    class IntComputer
+    class IntComputer : IProcess
     {
+        public int Identifier { get; set; }
+        public DateTime WaitingSince { get; set; }
         int InstructionPointer { get; set; }
         public Queue<int> Input { get; set; }
         public List<int> Output { get; set; }
-        ComputerStatus Status { get; set; }
-
+        public ComputerStatus Status { get; set; }
         public List<int> IntCodes { get; set; }
+        public int ShareProcessMemory { get; set; }
 
         public IntComputer()
         {
@@ -22,6 +25,8 @@ namespace AdventOfCode_CSharp.Day7
         public void Start()
         {
             while (Execute() == ComputerStatus.Running);
+            if(Status == ComputerStatus.Waiting)
+                WaitingSince = DateTime.Now;
             return;
         }
 
@@ -31,6 +36,7 @@ namespace AdventOfCode_CSharp.Day7
             var currentInstruction = new Instruction(IntCodes.GetRange(InstructionPointer, test));
             var result = executeInstruction(currentInstruction);
             InstructionPointer += result.Item2;
+            Status = result.Item1;
             return result.Item1;
         }
 
@@ -51,7 +57,7 @@ namespace AdventOfCode_CSharp.Day7
             }
             else if (instruction.Opcode == 3)
             {
-                //Console.WriteLine("Give input");
+                if(!Input.Any()) return new Tuple<ComputerStatus, int>(ComputerStatus.Waiting, 0);
                 var result = Input.Dequeue();
                 setValue(result, instruction.Param1Value.Item2);
                 return new Tuple<ComputerStatus, int>(ComputerStatus.Running, 2);
@@ -69,7 +75,7 @@ namespace AdventOfCode_CSharp.Day7
                 var result = getValue(instruction.Param1Value);
                 if(result != 0)
                 {
-                    return new Tuple<ComputerStatus, int>(ComputerStatus.Running, getValue(instruction.Param2Value));
+                    return new Tuple<ComputerStatus, int>(ComputerStatus.Running, getValue(instruction.Param2Value)-InstructionPointer);
                 }
                 return new Tuple<ComputerStatus, int>(ComputerStatus.Running, 3);
             }
@@ -78,7 +84,7 @@ namespace AdventOfCode_CSharp.Day7
                 var result = getValue(instruction.Param1Value);
                 if (result == 0)
                 {
-                    return new Tuple<ComputerStatus, int>(ComputerStatus.Running, getValue(instruction.Param2Value));
+                    return new Tuple<ComputerStatus, int>(ComputerStatus.Running, getValue(instruction.Param2Value)-InstructionPointer);
                 }
                 return new Tuple<ComputerStatus, int>(ComputerStatus.Running, 3);
 
@@ -110,7 +116,7 @@ namespace AdventOfCode_CSharp.Day7
             }
             else if(instruction.Opcode == 99)
             {
-                return new Tuple<ComputerStatus, int>(ComputerStatus.Halted, 1);
+                return new Tuple<ComputerStatus, int>(ComputerStatus.Halted, 0);
             }
             throw new InvalidOperationException();
         }
@@ -132,6 +138,18 @@ namespace AdventOfCode_CSharp.Day7
             }
         }
 
+        public Tuple<int, int> DumpOutput()
+        {
+            if (!Output.Any()) return null;
+            var value = new Tuple<int, int>(Output[Output.Count-1], ShareProcessMemory);
+            Output.Clear();
+            return value;
+        }
 
+        public void setInput(int? input)
+        {
+            if(input != null)
+                Input.Enqueue(input.GetValueOrDefault());
+        }
     }
 }
