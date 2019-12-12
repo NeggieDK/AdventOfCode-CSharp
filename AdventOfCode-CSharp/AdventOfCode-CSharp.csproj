@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>AdventOfCode_CSharp</RootNamespace>
-    <StartupObject>AdventOfCode_CSharp.Program</StartupObject>
+    <StartupObject>AdventOfCode_CSharp.Day10</StartupObject>
   </PropertyGroup>
 
 </Project>

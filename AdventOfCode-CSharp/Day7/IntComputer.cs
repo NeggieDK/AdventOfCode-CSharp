@@ -25,7 +25,7 @@ namespace AdventOfCode_CSharp.Day7
 
         public void Start()
         {
-            IntCodes.AddRange(new long[1000]);
+            if(InstructionPointer == 0)IntCodes.AddRange(new long[1000]);
             while (Execute() == ComputerStatus.Running);
             if(Status == ComputerStatus.Waiting)
                 WaitingSince = DateTime.Now;
@@ -69,7 +69,7 @@ namespace AdventOfCode_CSharp.Day7
             {
                 var result = getValue(instruction.Param1Value);
                 Output.Add(result);
-                Console.WriteLine(result);
+                //Console.WriteLine(result);
                 return new Tuple<ComputerStatus, long>(ComputerStatus.Running, 2);
 
             }
@@ -157,6 +157,14 @@ namespace AdventOfCode_CSharp.Day7
         {
             if (!Output.Any()) return null;
             var value = new Tuple<int, int>((int)Output[Output.Count-1], ShareProcessMemory);
+            Output.Clear();
+            return value;
+        }
+
+        public List<long> DumpFullOutput()
+        {
+            if (!Output.Any()) return null;
+            var value = Output.Select(i => i).ToList();
             Output.Clear();
             return value;
         }

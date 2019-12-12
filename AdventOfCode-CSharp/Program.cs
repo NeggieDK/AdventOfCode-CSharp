@@ -109,7 +109,7 @@ public class Scheduler
     }
     public void Run()
     {
-        while (ActiveProcess.Status == ComputerStatus.Running || WaitingProcesses.Keys.ToList().Any())
+        while (ActiveProcess.Status == ComputerStatus.Running || ActiveProcess.Status == ComputerStatus.Waiting || WaitingProcesses.Keys.ToList().Any())
         {
             if(ActiveProcess.Status == ComputerStatus.Running)
                 ActiveProcess.Start();
