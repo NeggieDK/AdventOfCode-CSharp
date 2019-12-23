@@ -21,7 +21,7 @@ namespace AdventOfCode_CSharp
             Orders.Clear();
 
             const long target = 1000000000000; 
-            long result = 0;
+             long result = 0;
             long previousResult = 0;
             long iterator = 1000;
             while(result < target)
