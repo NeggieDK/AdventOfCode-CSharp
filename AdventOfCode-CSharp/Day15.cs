@@ -3,6 +3,7 @@ using AdventOfCode_CSharp.Day7;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Text;
 using System.Threading;
 
 namespace AdventOfCode_CSharp
@@ -181,8 +182,56 @@ namespace AdventOfCode_CSharp
                 }
             }
 
-            Console.WriteLine($"Shortest way to cooler: {stepsToCoolerList.Min()}");
-            printHashMap(environment);
+            Console.WriteLine($"Least amount of steps to cooler: {stepsToCoolerList.Min()}");
+            //printHashMap(environment);
+            
+            var generations = new Dictionary<string, int>();
+            var pointsToCheck = new Queue<string>();
+            pointsToCheck.Enqueue("14,20");
+            generations.Add("14,20", 0);
+            while (pointsToCheck.Count > 0)
+            {
+                var point = pointsToCheck.Dequeue();
+                if (!environment.ContainsKey(point)) continue;
+                var pointX = int.Parse(point.Split(",")[0]);
+                var pointY = int.Parse(point.Split(",")[1]);
+                var generation = generations[point];
+                if (environment.ContainsKey($"{pointX},{pointY + 1}") && environment[$"{pointX},{pointY + 1}"] == 1)
+                {
+                    if (!generations.ContainsKey($"{pointX},{pointY + 1}"))
+                    {
+                        pointsToCheck.Enqueue($"{pointX},{pointY + 1}");
+                        generations.Add($"{pointX},{pointY + 1}", generation + 1);
+                    }
+                }
+
+                if (environment.ContainsKey($"{pointX},{pointY - 1}") && environment[$"{pointX},{pointY - 1}"] == 1)
+                {
+                    if (!generations.ContainsKey($"{pointX},{pointY - 1}"))
+                    {
+                        pointsToCheck.Enqueue($"{pointX},{pointY - 1}");
+                        generations.Add($"{pointX},{pointY - 1}", generation + 1);
+                    }
+                }
+
+                if (environment.ContainsKey($"{pointX + 1},{pointY}") && environment[$"{pointX + 1},{pointY}"] == 1)
+                {
+                    if (!generations.ContainsKey($"{pointX + 1},{pointY}"))
+                    {
+                        pointsToCheck.Enqueue($"{pointX + 1},{pointY}");
+                        generations.Add($"{pointX + 1},{pointY}", generation + 1);
+                    }
+                }
+                if (environment.ContainsKey($"{pointX - 1},{pointY}") && environment[$"{pointX - 1},{pointY}"] == 1)
+                {
+                    if (!generations.ContainsKey($"{pointX - 1},{pointY}"))
+                    {
+                        pointsToCheck.Enqueue($"{pointX - 1},{pointY}");
+                        generations.Add($"{pointX - 1},{pointY}", generation + 1);
+                    }
+                }
+            }
+            Console.WriteLine($"Part 2: it takes {generations.Values.Max()} minutes for the room to fill with oxygen");
         }
 
         public static void printHashMap(Dictionary<string, int> map)
