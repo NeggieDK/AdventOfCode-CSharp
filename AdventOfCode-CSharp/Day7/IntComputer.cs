@@ -25,7 +25,7 @@ namespace AdventOfCode_CSharp.Day7
 
         public void Start()
         {
-            if(InstructionPointer == 0)IntCodes.AddRange(new long[1000]);
+            if(InstructionPointer == 0)IntCodes.AddRange(new long[5000]);
             while (Execute() == ComputerStatus.Running);
             if(Status == ComputerStatus.Waiting)
                 WaitingSince = DateTime.Now;
