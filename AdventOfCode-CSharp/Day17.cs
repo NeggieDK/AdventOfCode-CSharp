@@ -13,34 +13,78 @@ namespace AdventOfCode_CSharp
             {
                 IntCodes = System.IO.File
                     .ReadAllText(
-                        "C:\\Users\\aarondk\\source\\repos\\AdventOfCode-CSharp\\AdventOfCode-CSharp\\Resources\\Day17.txt")
+                        "C:\\Users\\Aaron\\source\\repos\\AdventOfCode-CSharp\\AdventOfCode-CSharp\\Resources\\Day17.txt")
                     .Split(",").Select(long.Parse).ToList()
             };
             intComputer.Start();
-            var output = intComputer.DumpFullOutput();
-            var parsedOutput = ParseOutput(output);
-            var intersections = GetIntersections(parsedOutput);
+            var output = ParseAndPrintOutput(intComputer.DumpFullOutput());
+            var intersections = GetIntersections(output);
             Console.WriteLine($"Part1: The sum of the alignment parameters is {intersections.Values.Sum()}");
-            //The split the path into different functions (A,B,C ...) print out the whole path. And search for repeating patterns.
+            var path = GetPaths(output);
+
         }
 
-        public static List<List<string>> ParseOutput(List<long> output)
+        public static void CreateFunctions(List<string> input)
         {
-            var resultList = new List<List<string>>();
-            var tempList = new List<string>();
-            foreach (var element in output)
+
+        }
+
+        public static List<string> GetPaths(List<List<string>> input)
+        {
+            var movementList = new List<string>();
+            var x = 12;
+            var y = 16;
+            var (nextTurn, currentDirection) = GetNextTurn(input, "N", x, y);
+            movementList.Add(nextTurn);
+            var stepsForCurrentDirection = 0;
+            while (nextTurn != "X")
             {
-                if (element != 10)
+                _ = currentDirection switch
                 {
-                    tempList.Add(element == 35 ? "#" : ".");
-                }
-                else
+                    "N" => y--,
+                    "S" => y++,
+                    "E" => x++,
+                    "W" => x--,
+                };
+                stepsForCurrentDirection++;
+                var nextTurnTemp = GetNextTurn(input, currentDirection, x, y);
+                if (nextTurnTemp.Item1 != string.Empty)
                 {
-                    resultList.Add(tempList.Select(i => i).ToList());
-                    tempList.Clear();
+                    movementList.Add(stepsForCurrentDirection.ToString());
+                    movementList.Add(nextTurnTemp.Item1);
+                    stepsForCurrentDirection = 0;
                 }
+                (nextTurn, currentDirection) = nextTurnTemp;
             }
-            return resultList;
+            return movementList;
+        }
+
+        public static Tuple<string, string> GetNextTurn(List<List<string>> input, string currentDirection, int x, int y)
+        {
+            switch (currentDirection)
+            {
+                case "N":
+                    if (y != 0 && input[y - 1][x] == "#") return new Tuple<string, string>(string.Empty, currentDirection);
+                    if (x != input[0].Count - 1 && input[y][x + 1] == "#") return new Tuple<string, string>("R", "E");
+                    if (x != 0 && input[y][x - 1] == "#") return new Tuple<string, string>("L", "W");
+                    break;
+                case "S":
+                    if (y != input.Count-1 && input[y + 1][x] == "#") return new Tuple<string, string>(string.Empty, currentDirection);
+                    if (x != input[0].Count - 1 && input[y][x + 1] == "#") return new Tuple<string, string>("L", "E");
+                    if (x != 0 && input[y][x - 1] == "#") return new Tuple<string, string>("R", "W");
+                    break;
+                case "E":
+                    if (x != input[0].Count - 1 && input[y][x + 1] == "#") return new Tuple<string, string>(string.Empty, currentDirection);
+                    if (y != 0 && input[y - 1][x] == "#") return new Tuple<string, string>("L", "N");
+                    if (y != input.Count - 1 && input[y + 1][x] == "#") return new Tuple<string, string>("R", "S");
+                    break;
+                case "W":
+                    if (x != 0 && input[y][x - 1] == "#") return new Tuple<string, string>(string.Empty, currentDirection);
+                    if (y != 0 && input[y - 1][x] == "#") return new Tuple<string, string>("R", "N");
+                    if (y != input.Count - 1 && input[y + 1][x] == "#") return new Tuple<string, string>("L", "S");
+                    break;
+            }
+            return new Tuple<string, string>("X", string.Empty);
         }
 
         public static Dictionary<string, int> GetIntersections(List<List<string>> input)
@@ -50,16 +94,9 @@ namespace AdventOfCode_CSharp
             {
                 for (var j = 0; j < input[i].Count; j++)
                 {
-                    if(IsIntersection(input, j, i))
-                        Console.Write("O");
-                    else
-                        Console.Write(input[i][j]);
                     if(IsIntersection(input, j, i)) intersections.Add($"{j},{i}", j*i);
                 }
-
-                Console.WriteLine();
             }
-
             return intersections;
         }
 
@@ -68,6 +105,28 @@ namespace AdventOfCode_CSharp
             if (x <= 1 || x >= input[y].Count - 2 || y <= 1 || y >= input.Count - 2) return false;
             return (input[y][x] == "#" || input[y][x] == "^") && input[y + 1][x] == "#" && input[y - 1][x] == "#" &&
                    input[y][x + 1] == "#" && input[y][x - 1] == "#";
+        }
+
+        public static List<List<string>> ParseAndPrintOutput(List<long> output)
+        {
+            var resultList = new List<List<string>>();
+            var tempList = new List<string>();
+            foreach (var element in output)
+            {
+                if (element != 10)
+                {
+                    Console.Write(((char)element).ToString());
+                    tempList.Add(((char)element).ToString());
+                }
+                else
+                {
+                    Console.WriteLine();
+                    if(tempList.Any())
+                        resultList.Add(tempList.Select(i => i).ToList());
+                    tempList.Clear();
+                }
+            }
+            return resultList;
         }
     }
 }

@@ -44,7 +44,7 @@ namespace AdventOfCode_CSharp
                         var (item1, item2) = UpdateDirection(currentX, currentY, currentDirection);
                         currentX = item1;
                         currentY = item2;
-                        //Console.WriteLine($"Current at point: {currentX}, {currentY}");
+                        Console.WriteLine($"Current at point: {currentX}, {currentY}");
                     }
                     if (true)
                     {
@@ -71,7 +71,7 @@ namespace AdventOfCode_CSharp
                                 moveStacks.Push(currentDirection);
                                 goBack = true;
                                 amountNeighboursChecked++;
-                                //Console.WriteLine($"Checking neighbour {currentDirection}");
+                                Console.WriteLine($"Checking neighbour {currentDirection}");
                             }
                             else
                             {
@@ -80,7 +80,7 @@ namespace AdventOfCode_CSharp
                                     var tempPosition = UpdateDirection(currentX, currentY, currentDirection);
                                     if(!environment.ContainsKey($"{tempPosition.Item1},{tempPosition.Item2}"))
                                         environment.Add($"{tempPosition.Item1},{tempPosition.Item2}", 0);
-                                   // Console.WriteLine("Neighbour is a wall");
+                                    Console.WriteLine("Neighbour is a wall");
                                     moveStacks.Pop();
                                     skipInput = true;
                                 }
@@ -96,8 +96,8 @@ namespace AdventOfCode_CSharp
                                         Y = currentY,
                                         DirectionsToPoint = StackExtensions.ToReverseQueue(moveStacks)
                                     };
-                                    //Console.WriteLine("Neighbour is not a wall");
-                                   // Console.WriteLine("Going back to checkpoint");
+                                    Console.WriteLine("Neighbour is not a wall");
+                                    Console.WriteLine("Going back to checkpoint");
                                     if(!environment.ContainsKey($"{currentX},{currentY}"))
                                     {
                                         environment.Add($"{currentX},{currentY}", output.GetValueOrDefault());
@@ -116,7 +116,7 @@ namespace AdventOfCode_CSharp
                         }
                         else if (currentState == State.GoingBack)
                         {
-                            //Console.WriteLine("Going back");
+                            Console.WriteLine("Going back");
                             if (moveStacks.Count > 0)
                             {
                                 
@@ -132,7 +132,7 @@ namespace AdventOfCode_CSharp
                         }
                         else if (currentState == State.GoingToPoint)
                         {
-                           // Console.WriteLine("Going to new point");
+                            Console.WriteLine("Going to new point");
                             if (currentCheckPoint != null && currentCheckPoint.DirectionsToPoint.Count > 0)
                             {
                                 if (output == 1 || output == 2)
@@ -172,8 +172,8 @@ namespace AdventOfCode_CSharp
                     }
                     else
                     {
-                        //Console.WriteLine($"Current direction: {currentDirection}");
-                       // Console.WriteLine();
+                        Console.WriteLine($"Current direction: {currentDirection}");
+                        Console.WriteLine();
                         intComputer.Input.Enqueue((int)currentDirection+1);
                         intComputer.Start();
                         //Thread.Sleep(10);
