@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdventOfCode_CSharp.Day17Objects;
 using AdventOfCode_CSharp.Day7;
 
 namespace AdventOfCode_CSharp
@@ -21,13 +22,68 @@ namespace AdventOfCode_CSharp
             var intersections = GetIntersections(output);
             Console.WriteLine($"Part1: The sum of the alignment parameters is {intersections.Values.Sum()}");
             var path = GetPaths(output);
-
+            for (int i = 0; i < path.Count-2; i += 2)
+            {
+                Console.WriteLine($"{path[i]}{path[i+1]}");
+            }
+            var functions = CreateFunctions(path);
         }
 
-        public static void CreateFunctions(List<string> input)
+        public static List<List<int>> CreateFunctions(List<string> input)
         {
-
+            input.RemoveAt(input.Count - 1);
+            var patternObjectQueue = new Queue<PatternObject>();
+            patternObjectQueue.Enqueue(new PatternObject { Input = input, Patterns = new List<List<string>>(), StartingIndex = 0 });
+            var matches = new List<PatternObject>();
+            while(patternObjectQueue.Any())
+            {
+                var amount = 12;
+                var currentObject = patternObjectQueue.Dequeue();
+                if (currentObject.AllPatternsFound && currentObject.Patterns.Count == 3)
+                {
+                    matches.Add(currentObject);
+                }
+                else if (currentObject.Patterns.Count > 3 && !currentObject.AllPatternsFound) continue;
+                while (amount >= 4 && !currentObject.AllPatternsFound)
+                {
+                    amount -= 2;
+                    if (amount + currentObject.StartingIndex >= currentObject.Input.Count - 1) continue;
+                    var pattern = currentObject.Input.GetRange(currentObject.StartingIndex, amount);
+                    if (currentObject.Input.FindPattern(pattern) < 1) continue;
+                    var deepCopy = currentObject.Input.Select(i => i).ToList();
+                    deepCopy.ErasePattern(pattern);
+                    var tempStartingIndex = currentObject.StartingIndex + amount;
+                    tempStartingIndex = deepCopy.FirstNotNullIndex(tempStartingIndex);
+                    var newPatternObject = new PatternObject
+                    {
+                        Input = deepCopy,
+                        StartingIndex = tempStartingIndex,
+                        Patterns = currentObject.Patterns.Select(i => i).ToList()
+                    };
+                    newPatternObject.Patterns.Add(pattern);
+                    patternObjectQueue.Enqueue(newPatternObject);
+                }
+            }
+            if (matches.Count == 0) throw new ArgumentOutOfRangeException();
+            var patternObject = matches.First();
+            var mainFunction = input.Select(i => i).ToList();
+            var functions = new List<string> { "A", "B", "C" };
+            var functionIt = 0;
+            foreach (var pattern in patternObject.Patterns)
+            {
+                mainFunction = mainFunction.ReplacePattern(pattern, functions[functionIt]);
+                functionIt++;
+            }
+            return new List<List<int>>
+            {
+                mainFunction.ToASCII(),
+                patternObject.Patterns[0].ToASCII(),
+                patternObject.Patterns[1].ToASCII(),
+                patternObject.Patterns[2].ToASCII()
+            };
         }
+
+
 
         public static List<string> GetPaths(List<List<string>> input)
         {
