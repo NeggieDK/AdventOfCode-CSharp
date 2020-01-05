@@ -22,11 +22,29 @@ namespace AdventOfCode_CSharp
             var intersections = GetIntersections(output);
             Console.WriteLine($"Part1: The sum of the alignment parameters is {intersections.Values.Sum()}");
             var path = GetPaths(output);
-            for (int i = 0; i < path.Count-2; i += 2)
-            {
-                Console.WriteLine($"{path[i]}{path[i+1]}");
-            }
             var functions = CreateFunctions(path);
+            var intCodes = System.IO.File
+                    .ReadAllText(
+                        "C:\\Users\\Aaron\\source\\repos\\AdventOfCode-CSharp\\AdventOfCode-CSharp\\Resources\\Day17.txt")
+                    .Split(",").Select(long.Parse).ToList();
+            intCodes[0] = 2;
+            intComputer = new IntComputer
+            {
+                    IntCodes = intCodes
+            };
+            foreach(var function in functions)
+            {
+                foreach(var element in function)
+                {
+                    intComputer.Input.Enqueue(element);
+                }
+            }
+            intComputer.Input.Enqueue(110);
+            intComputer.Input.Enqueue(10);
+            intComputer.Start();
+            var outputPart2 = intComputer.DumpFullOutput();
+            var parsedOutputPart2 = ParseAndPrintOutput(outputPart2);
+            Console.WriteLine($"Part2: amount of dust collected: {outputPart2.Last()}");
         }
 
         public static List<List<int>> CreateFunctions(List<string> input)

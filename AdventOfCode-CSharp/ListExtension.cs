@@ -103,10 +103,22 @@ namespace AdventOfCode_CSharp
             {
                 var element = input[i];
                 var element2 = input[i + 1];
+                var parsed = int.TryParse(input[i + 1], out var element2Numeric);
+                var extraElement = 0;
+                if(parsed && element2Numeric > 9)
+                {
+                    extraElement = element2Numeric - 9;
+                    element2Numeric = 9;
+                }
                 newList.Add(element[0]);
                 newList.Add(","[0]);
-                newList.Add(element2[0]);
+                newList.Add(parsed ? (char)(element2Numeric+48) : element2[0]);
                 newList.Add(","[0]);
+                if(extraElement != 0)
+                {
+                    newList.Add((char)(extraElement + 48));
+                    newList.Add(","[0]);
+                }
 
             }
             newList[newList.Count - 1] = 10;
