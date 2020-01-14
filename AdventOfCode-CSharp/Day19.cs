@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using AdventOfCode_CSharp.Day7;
 
@@ -34,18 +33,42 @@ namespace AdventOfCode_CSharp
                 Console.WriteLine();
             }
 
-            var t = doesLineContain100AdjacentSquares(0, intCodes.Select(i => i).ToList());
-            Console.WriteLine(t);
-            //Scan every horizontal line to see if 100 squares fit, if not just go to next
-            //If yes go to next and see if that fits
+            var found = false;
+            var yLine = 0;
+            while (!found)
+            {
+                var quantityHorizontal = QuantityAdjacentSquaresHorizontal(yLine, intCodes.Select(i => i).ToList());
+                if (quantityHorizontal.Amount >= 100)
+                {
+                    var adjacentWith100Depth = 0;
+                    for (var xLine = quantityHorizontal.EndX; xLine >= quantityHorizontal.StartX; xLine--)
+                    {
+                        var quantityVertical = QuantityAdjacentSquaresVertical(xLine, yLine, intCodes.Select(i => i).ToList());
+                        if (quantityVertical.Amount < 100) 
+                            break;
+                        adjacentWith100Depth++;
+                        if (adjacentWith100Depth >= 100)
+                        {
+                            Console.WriteLine($"Part2: {xLine*1000+yLine}");
+                            break;
+                            found = true;
+                        }
+                    }
+                }
+
+                yLine++;
+            }
+            //Correct answer = 18651593 (calculated with very inefficient slow code :()
         }
 
-        public static int doesLineContain100AdjacentSquares(int y, List<long> intCodes)
+        public static HorizontalLine QuantityAdjacentSquaresHorizontal(int y, List<long> intCodes)
         {
             var done = false;
             var x = 0;
             var previousOutput = 0;
-            var adjacentSquares = 0;
+            var startX = 0;
+            var endX = 0;
+                
             while (!done)
             {
                 var intComputer = new IntComputer
@@ -56,25 +79,96 @@ namespace AdventOfCode_CSharp
                 intComputer.Input.Enqueue(y);
                 intComputer.Start();
                 var output = intComputer.DumpOutput().Item1;
-                if (previousOutput == 1 && output != 1 && adjacentSquares < 100)
+                if (previousOutput == 1 && output == 0)
                 {
-                    done = true;
-                    return adjacentSquares;
+                    endX = x - 1;
+                    return new HorizontalLine
+                    {
+                        EndX = endX,
+                        StartX = startX,
+                        Amount = endX - startX + 1,
+                        Y = y
+                    };
                 }
-                else if(output == 1)
+                else if (previousOutput == 0 && output == 1)
                 {
-                    previousOutput = 1;
-                    adjacentSquares++;
+                    startX = x ;
                 }
-                else if(adjacentSquares >= 100)
 
-                {
-                    return adjacentSquares;
-                }
-
+                if (x == 5000) done = true;
+                previousOutput = output;
                 x++;
             }
-            return 0;
+            return new HorizontalLine
+            {
+                Y = 0,
+                EndX = 0,
+                StartX = 0,
+                Amount = 0
+            };
         }
+
+        public static VerticalLine QuantityAdjacentSquaresVertical(int x, int yOffset, List<long> intCodes)
+        {
+            var done = false;
+            var y = yOffset;
+            var previousOutput = 0;
+            var startY = 0;
+            var endY = 0;
+                
+            while (!done)
+            {
+                var intComputer = new IntComputer
+                {
+                    IntCodes = intCodes.Select(i => i).ToList()
+                };
+                intComputer.Input.Enqueue(x);
+                intComputer.Input.Enqueue(y);
+                intComputer.Start();
+                var output = intComputer.DumpOutput().Item1;
+                if (previousOutput == 1 && output == 0)
+                {
+                    endY = y - 1;
+                    return new VerticalLine
+                    {
+                        EndY = endY,
+                        StartY = startY,
+                        Amount = endY - startY + 1,
+                        X = x
+                    };
+                }
+                else if (previousOutput == 0 && output == 1)
+                {
+                    startY = y;
+                }
+
+                if (y == 5000) done = true;
+                previousOutput = output;
+                y++;
+            }
+            return new VerticalLine
+            {
+                X = 0,
+                EndY = 0,
+                StartY = 0,
+                Amount = 0
+            };
+        }
+    }
+
+    class HorizontalLine
+    {
+        public int StartX { get; set;}
+        public int EndX { get; set; }
+        public int Amount { get; set; }
+        public int Y { get; set; }
+    }
+
+    class VerticalLine
+    {
+        public int StartY { get; set;}
+        public int EndY { get; set; }
+        public int Amount { get; set; }
+        public int X { get; set; }
     }
 }
