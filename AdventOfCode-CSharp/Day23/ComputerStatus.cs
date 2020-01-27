@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode_CSharp.Day7
+﻿namespace AdventOfCode_CSharp.Day23
 {
     public enum ComputerStatus
     {

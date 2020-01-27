@@ -5,7 +5,7 @@ using AdventOfCode_CSharp.Day7;
 
 namespace AdventOfCode_CSharp
 {
-    class Day19
+    internal class Day19
     {
         public static void Main()
         {
@@ -15,19 +15,17 @@ namespace AdventOfCode_CSharp
                 .Split(",").Select(long.Parse).ToList();
             var affectedPoints = 0;
             for (var y = 0; y < 50; y++)
+            for (var x = 0; x < 50; x++)
             {
-                for (var x = 0; x < 50; x++)
+                var intComputer = new IntComputer
                 {
-                    var intComputer = new IntComputer
-                    {
-                        IntCodes = intCodes.Select(i => i).ToList()
-                    };
-                    intComputer.Input.Enqueue(x);
-                    intComputer.Input.Enqueue(y);
-                    intComputer.Start();
-                    if (intComputer.DumpOutput().Item1 == 1)
-                        affectedPoints++;
-                }
+                    IntCodes = intCodes.Select(i => i).ToList()
+                };
+                intComputer.Input.Enqueue(x);
+                intComputer.Input.Enqueue(y);
+                intComputer.Start();
+                if (intComputer.DumpOutput().Item1 == 1)
+                    affectedPoints++;
             }
 
             Console.WriteLine($"Amount of affected points = {affectedPoints}");
@@ -39,9 +37,10 @@ namespace AdventOfCode_CSharp
                 var point = GetLeftMostPointInRow(yLine, xOffset, intCodes.Select(i => i).ToList());
                 if (DoesPointExist(point + 99, yLine - 99, intCodes.Select(i => i).ToList()))
                 {
-                    Console.WriteLine($"Part2: {point*10000+(yLine-99)}");
+                    Console.WriteLine($"Part2: {point * 10000 + (yLine - 99)}");
                     break;
                 }
+
                 yLine++;
                 xOffset = point;
             }
@@ -59,7 +58,7 @@ namespace AdventOfCode_CSharp
                 intComputer.Input.Enqueue(x);
                 intComputer.Input.Enqueue(y);
                 intComputer.Start();
-                
+
                 var output = intComputer.DumpOutput().Item1;
                 if (output == 1) return x;
                 x++;

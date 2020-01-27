@@ -4,7 +4,7 @@ using AdventOfCode_CSharp.Day7;
 
 namespace AdventOfCode_CSharp
 {
-    class Day21
+    internal class Day21
     {
         public static void Main()
         {
@@ -24,15 +24,13 @@ namespace AdventOfCode_CSharp
             };
             foreach (var el in instructions)
             {
-                if ( el == 13) continue;
+                if (el == 13) continue;
                 intComputer.Input.Enqueue(el);
             }
+
             intComputer.Start();
             var output = intComputer.DumpFullOutput();
-            foreach (var el in output)
-            {
-                Console.Write((char)el);
-            }
+            foreach (var el in output) Console.Write((char) el);
             Console.WriteLine($"Part1: amount of hull damage {output.Last()}");
             var intComputer2 = new IntComputer
             {
@@ -40,15 +38,13 @@ namespace AdventOfCode_CSharp
             };
             foreach (var el in instructions2)
             {
-                if ( el == 13) continue;
+                if (el == 13) continue;
                 intComputer2.Input.Enqueue(el);
             }
+
             intComputer2.Start();
             var output2 = intComputer2.DumpFullOutput();
-            foreach (var el in output2)
-            {
-                Console.Write((char)el);
-            }
+            foreach (var el in output2) Console.Write((char) el);
             Console.WriteLine($"Part2: amount of hull damage {output2.Last()}");
         }
     }

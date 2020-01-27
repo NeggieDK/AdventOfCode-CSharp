@@ -8,11 +8,14 @@ using System.Threading;
 
 namespace AdventOfCode_CSharp
 {
-    class Day15
+    internal class Day15
     {
         public static void Main()
         {
-            var input = System.IO.File.ReadAllText("C:\\Users\\Aaron\\source\\repos\\AdventOfCode-CSharp\\AdventOfCode-CSharp\\Resources\\Day15.txt").Split(",").Select(long.Parse).ToList();
+            var input = System.IO.File
+                .ReadAllText(
+                    "C:\\Users\\Aaron\\source\\repos\\AdventOfCode-CSharp\\AdventOfCode-CSharp\\Resources\\Day15.txt")
+                .Split(",").Select(long.Parse).ToList();
             var checkPoints = new Queue<CheckPoint>();
             var moveStacks = new Stack<Direction2>();
             var environment = new Dictionary<string, int>();
@@ -33,8 +36,8 @@ namespace AdventOfCode_CSharp
                 IntCodes = input
             };
             intComputer.Start();
-            while ((intComputer.Status == ComputerStatus.Running || intComputer.Status == ComputerStatus.Waiting) && !found)
-            {
+            while ((intComputer.Status == ComputerStatus.Running || intComputer.Status == ComputerStatus.Waiting) &&
+                   !found)
                 if (intComputer.Status == ComputerStatus.Waiting)
                 {
                     //Move the robot according to the output
@@ -46,28 +49,17 @@ namespace AdventOfCode_CSharp
                         currentY = item2;
                         Console.WriteLine($"Current at point: {currentX}, {currentY}");
                     }
+
                     if (true)
                     {
                         if (currentState == State.CheckNeighbours)
                         {
                             if (goBack == false)
                             {
-                                if (amountNeighboursChecked == 0)
-                                {
-                                    currentDirection = Direction2.North;
-                                }
-                                if (amountNeighboursChecked == 1)
-                                {
-                                    currentDirection = Direction2.South;
-                                }
-                                if (amountNeighboursChecked == 2)
-                                {
-                                    currentDirection = Direction2.West;
-                                }
-                                if (amountNeighboursChecked == 3)
-                                {
-                                    currentDirection = Direction2.East;
-                                }
+                                if (amountNeighboursChecked == 0) currentDirection = Direction2.North;
+                                if (amountNeighboursChecked == 1) currentDirection = Direction2.South;
+                                if (amountNeighboursChecked == 2) currentDirection = Direction2.West;
+                                if (amountNeighboursChecked == 3) currentDirection = Direction2.East;
                                 moveStacks.Push(currentDirection);
                                 goBack = true;
                                 amountNeighboursChecked++;
@@ -75,21 +67,18 @@ namespace AdventOfCode_CSharp
                             }
                             else
                             {
-                                if(output == 0)
+                                if (output == 0)
                                 {
                                     var tempPosition = UpdateDirection(currentX, currentY, currentDirection);
-                                    if(!environment.ContainsKey($"{tempPosition.Item1},{tempPosition.Item2}"))
+                                    if (!environment.ContainsKey($"{tempPosition.Item1},{tempPosition.Item2}"))
                                         environment.Add($"{tempPosition.Item1},{tempPosition.Item2}", 0);
                                     Console.WriteLine("Neighbour is a wall");
                                     moveStacks.Pop();
                                     skipInput = true;
                                 }
-                                else if(output == 1 || output == 2)
+                                else if (output == 1 || output == 2)
                                 {
-                                    if (output == 2)
-                                    {
-                                        stepsToCoolerList.Add(moveStacks.Count);
-                                    }
+                                    if (output == 2) stepsToCoolerList.Add(moveStacks.Count);
                                     var checkPoint = new CheckPoint
                                     {
                                         X = currentX,
@@ -98,20 +87,22 @@ namespace AdventOfCode_CSharp
                                     };
                                     Console.WriteLine("Neighbour is not a wall");
                                     Console.WriteLine("Going back to checkpoint");
-                                    if(!environment.ContainsKey($"{currentX},{currentY}"))
+                                    if (!environment.ContainsKey($"{currentX},{currentY}"))
                                     {
                                         environment.Add($"{currentX},{currentY}", output.GetValueOrDefault());
                                         checkPoints.Enqueue(checkPoint);
                                     }
+
                                     currentDirection = GetOppositeDirection(moveStacks.Pop());
                                 }
+
                                 if (amountNeighboursChecked >= 4)
                                 {
                                     currentState = State.GoingBack;
                                     amountNeighboursChecked = 0;
                                 }
+
                                 goBack = false;
-                                
                             }
                         }
                         else if (currentState == State.GoingBack)
@@ -119,16 +110,13 @@ namespace AdventOfCode_CSharp
                             Console.WriteLine("Going back");
                             if (moveStacks.Count > 0)
                             {
-                                
                                 currentDirection = GetOppositeDirection(moveStacks.Pop());
                             }
                             else
                             {
-                                
                                 currentState = State.GoingToPoint;
                                 skipInput = true;
                             }
-                            
                         }
                         else if (currentState == State.GoingToPoint)
                         {
@@ -143,7 +131,7 @@ namespace AdventOfCode_CSharp
                                 else
                                 {
                                     throw new ArgumentException();
-                                }    
+                                }
                             }
                             else if (currentCheckPoint != null && currentCheckPoint.DirectionsToPoint.Count == 0)
                             {
@@ -153,7 +141,9 @@ namespace AdventOfCode_CSharp
                             else
                             {
                                 if (checkPoints.Count == 0)
+                                {
                                     found = true;
+                                }
                                 else
                                 {
                                     currentCheckPoint = checkPoints.Dequeue();
@@ -162,7 +152,8 @@ namespace AdventOfCode_CSharp
                                 }
                             }
 
-                            if (currentCheckPoint != null && currentCheckPoint.DirectionsToPoint.Count == 0) currentState = State.CheckNeighbours;
+                            if (currentCheckPoint != null && currentCheckPoint.DirectionsToPoint.Count == 0)
+                                currentState = State.CheckNeighbours;
                         }
                     }
 
@@ -174,17 +165,15 @@ namespace AdventOfCode_CSharp
                     {
                         Console.WriteLine($"Current direction: {currentDirection}");
                         Console.WriteLine();
-                        intComputer.Input.Enqueue((int)currentDirection+1);
+                        intComputer.Input.Enqueue((int) currentDirection + 1);
                         intComputer.Start();
                         //Thread.Sleep(10);
                     }
-                   
                 }
-            }
 
             Console.WriteLine($"Least amount of steps to cooler: {stepsToCoolerList.Min()}");
             //printHashMap(environment);
-            
+
             var generations = new Dictionary<string, int>();
             var pointsToCheck = new Queue<string>();
             pointsToCheck.Enqueue("14,20");
@@ -197,40 +186,34 @@ namespace AdventOfCode_CSharp
                 var pointY = int.Parse(point.Split(",")[1]);
                 var generation = generations[point];
                 if (environment.ContainsKey($"{pointX},{pointY + 1}") && environment[$"{pointX},{pointY + 1}"] == 1)
-                {
                     if (!generations.ContainsKey($"{pointX},{pointY + 1}"))
                     {
                         pointsToCheck.Enqueue($"{pointX},{pointY + 1}");
                         generations.Add($"{pointX},{pointY + 1}", generation + 1);
                     }
-                }
 
                 if (environment.ContainsKey($"{pointX},{pointY - 1}") && environment[$"{pointX},{pointY - 1}"] == 1)
-                {
                     if (!generations.ContainsKey($"{pointX},{pointY - 1}"))
                     {
                         pointsToCheck.Enqueue($"{pointX},{pointY - 1}");
                         generations.Add($"{pointX},{pointY - 1}", generation + 1);
                     }
-                }
 
                 if (environment.ContainsKey($"{pointX + 1},{pointY}") && environment[$"{pointX + 1},{pointY}"] == 1)
-                {
                     if (!generations.ContainsKey($"{pointX + 1},{pointY}"))
                     {
                         pointsToCheck.Enqueue($"{pointX + 1},{pointY}");
                         generations.Add($"{pointX + 1},{pointY}", generation + 1);
                     }
-                }
+
                 if (environment.ContainsKey($"{pointX - 1},{pointY}") && environment[$"{pointX - 1},{pointY}"] == 1)
-                {
                     if (!generations.ContainsKey($"{pointX - 1},{pointY}"))
                     {
                         pointsToCheck.Enqueue($"{pointX - 1},{pointY}");
                         generations.Add($"{pointX - 1},{pointY}", generation + 1);
                     }
-                }
             }
+
             Console.WriteLine($"Part 2: it takes {generations.Values.Max()} minutes for the room to fill with oxygen");
         }
 
@@ -251,14 +234,16 @@ namespace AdventOfCode_CSharp
                         Console.Write("O");
                         continue;
                     }
+
                     var value = map[$"{j},{i}"];
-                    if(value == 0)
+                    if (value == 0)
                         Console.Write("#");
-                    else if(value == 1)
+                    else if (value == 1)
                         Console.Write(" ");
-                    else if(value == 2)
+                    else if (value == 2)
                         Console.Write("X");
                 }
+
                 Console.WriteLine();
             }
         }
@@ -281,15 +266,15 @@ namespace AdventOfCode_CSharp
                     break;
             }
 
-            return new Tuple<int, int>(x,y);
+            return new Tuple<int, int>(x, y);
         }
 
         public static Direction2 GetNextDirection(Direction2 direction)
         {
-            var intDirection = (int) direction +1;
+            var intDirection = (int) direction + 1;
             return intDirection >= 3 ? (Direction2) 0 : (Direction2) intDirection;
         }
-        
+
         public static Direction2 GetOppositeDirection(Direction2 direction)
         {
             switch (direction)
@@ -332,16 +317,13 @@ namespace AdventOfCode_CSharp
     {
         public static Queue<Direction2> ToReverseQueue(Stack<Direction2> stack)
         {
-            var queue =  new Queue<Direction2>();
+            var queue = new Queue<Direction2>();
             var stackList = stack.ToList();
             stackList.Reverse();
-            foreach (var direction in stackList)
-            {
-                queue.Enqueue(direction);
-            }
+            foreach (var direction in stackList) queue.Enqueue(direction);
             return queue;
         }
-        
+
         public static Direction2 GetOppositeDirection(Direction2 direction)
         {
             switch (direction)

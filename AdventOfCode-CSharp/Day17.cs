@@ -6,7 +6,7 @@ using AdventOfCode_CSharp.Day7;
 
 namespace AdventOfCode_CSharp
 {
-    class Day17
+    internal class Day17
     {
         public static void Main()
         {
@@ -24,21 +24,17 @@ namespace AdventOfCode_CSharp
             var path = GetPaths(output);
             var functions = CreateFunctions(path);
             var intCodes = System.IO.File
-                    .ReadAllText(
-                        "C:\\Users\\Aaron\\source\\repos\\AdventOfCode-CSharp\\AdventOfCode-CSharp\\Resources\\Day17.txt")
-                    .Split(",").Select(long.Parse).ToList();
+                .ReadAllText(
+                    "C:\\Users\\Aaron\\source\\repos\\AdventOfCode-CSharp\\AdventOfCode-CSharp\\Resources\\Day17.txt")
+                .Split(",").Select(long.Parse).ToList();
             intCodes[0] = 2;
             intComputer = new IntComputer
             {
-                    IntCodes = intCodes
+                IntCodes = intCodes
             };
-            foreach(var function in functions)
-            {
-                foreach(var element in function)
-                {
-                    intComputer.Input.Enqueue(element);
-                }
-            }
+            foreach (var function in functions)
+            foreach (var element in function)
+                intComputer.Input.Enqueue(element);
             intComputer.Input.Enqueue(110);
             intComputer.Input.Enqueue(10);
             intComputer.Start();
@@ -51,16 +47,15 @@ namespace AdventOfCode_CSharp
         {
             input.RemoveAt(input.Count - 1);
             var patternObjectQueue = new Queue<PatternObject>();
-            patternObjectQueue.Enqueue(new PatternObject { Input = input, Patterns = new List<List<string>>(), StartingIndex = 0 });
+            patternObjectQueue.Enqueue(new PatternObject
+                {Input = input, Patterns = new List<List<string>>(), StartingIndex = 0});
             var matches = new List<PatternObject>();
-            while(patternObjectQueue.Any())
+            while (patternObjectQueue.Any())
             {
                 var amount = 12;
                 var currentObject = patternObjectQueue.Dequeue();
                 if (currentObject.AllPatternsFound && currentObject.Patterns.Count == 3)
-                {
                     matches.Add(currentObject);
-                }
                 else if (currentObject.Patterns.Count > 3 && !currentObject.AllPatternsFound) continue;
                 while (amount >= 4 && !currentObject.AllPatternsFound)
                 {
@@ -82,16 +77,18 @@ namespace AdventOfCode_CSharp
                     patternObjectQueue.Enqueue(newPatternObject);
                 }
             }
+
             if (matches.Count == 0) throw new ArgumentOutOfRangeException();
             var patternObject = matches.First();
             var mainFunction = input.Select(i => i).ToList();
-            var functions = new List<string> { "A", "B", "C" };
+            var functions = new List<string> {"A", "B", "C"};
             var functionIt = 0;
             foreach (var pattern in patternObject.Patterns)
             {
                 mainFunction = mainFunction.ReplacePattern(pattern, functions[functionIt]);
                 functionIt++;
             }
+
             return new List<List<int>>
             {
                 mainFunction.ToASCII(),
@@ -100,7 +97,6 @@ namespace AdventOfCode_CSharp
                 patternObject.Patterns[2].ToASCII()
             };
         }
-
 
 
         public static List<string> GetPaths(List<List<string>> input)
@@ -128,8 +124,10 @@ namespace AdventOfCode_CSharp
                     movementList.Add(nextTurnTemp.Item1);
                     stepsForCurrentDirection = 0;
                 }
+
                 (nextTurn, currentDirection) = nextTurnTemp;
             }
+
             return movementList;
         }
 
@@ -138,26 +136,31 @@ namespace AdventOfCode_CSharp
             switch (currentDirection)
             {
                 case "N":
-                    if (y != 0 && input[y - 1][x] == "#") return new Tuple<string, string>(string.Empty, currentDirection);
+                    if (y != 0 && input[y - 1][x] == "#")
+                        return new Tuple<string, string>(string.Empty, currentDirection);
                     if (x != input[0].Count - 1 && input[y][x + 1] == "#") return new Tuple<string, string>("R", "E");
                     if (x != 0 && input[y][x - 1] == "#") return new Tuple<string, string>("L", "W");
                     break;
                 case "S":
-                    if (y != input.Count-1 && input[y + 1][x] == "#") return new Tuple<string, string>(string.Empty, currentDirection);
+                    if (y != input.Count - 1 && input[y + 1][x] == "#")
+                        return new Tuple<string, string>(string.Empty, currentDirection);
                     if (x != input[0].Count - 1 && input[y][x + 1] == "#") return new Tuple<string, string>("L", "E");
                     if (x != 0 && input[y][x - 1] == "#") return new Tuple<string, string>("R", "W");
                     break;
                 case "E":
-                    if (x != input[0].Count - 1 && input[y][x + 1] == "#") return new Tuple<string, string>(string.Empty, currentDirection);
+                    if (x != input[0].Count - 1 && input[y][x + 1] == "#")
+                        return new Tuple<string, string>(string.Empty, currentDirection);
                     if (y != 0 && input[y - 1][x] == "#") return new Tuple<string, string>("L", "N");
                     if (y != input.Count - 1 && input[y + 1][x] == "#") return new Tuple<string, string>("R", "S");
                     break;
                 case "W":
-                    if (x != 0 && input[y][x - 1] == "#") return new Tuple<string, string>(string.Empty, currentDirection);
+                    if (x != 0 && input[y][x - 1] == "#")
+                        return new Tuple<string, string>(string.Empty, currentDirection);
                     if (y != 0 && input[y - 1][x] == "#") return new Tuple<string, string>("R", "N");
                     if (y != input.Count - 1 && input[y + 1][x] == "#") return new Tuple<string, string>("L", "S");
                     break;
             }
+
             return new Tuple<string, string>("X", string.Empty);
         }
 
@@ -165,12 +168,9 @@ namespace AdventOfCode_CSharp
         {
             var intersections = new Dictionary<string, int>();
             for (var i = 0; i < input.Count; i++)
-            {
-                for (var j = 0; j < input[i].Count; j++)
-                {
-                    if(IsIntersection(input, j, i)) intersections.Add($"{j},{i}", j*i);
-                }
-            }
+            for (var j = 0; j < input[i].Count; j++)
+                if (IsIntersection(input, j, i))
+                    intersections.Add($"{j},{i}", j * i);
             return intersections;
         }
 
@@ -186,20 +186,19 @@ namespace AdventOfCode_CSharp
             var resultList = new List<List<string>>();
             var tempList = new List<string>();
             foreach (var element in output)
-            {
                 if (element != 10)
                 {
-                    Console.Write(((char)element).ToString());
-                    tempList.Add(((char)element).ToString());
+                    Console.Write(((char) element).ToString());
+                    tempList.Add(((char) element).ToString());
                 }
                 else
                 {
                     Console.WriteLine();
-                    if(tempList.Any())
+                    if (tempList.Any())
                         resultList.Add(tempList.Select(i => i).ToList());
                     tempList.Clear();
                 }
-            }
+
             return resultList;
         }
     }

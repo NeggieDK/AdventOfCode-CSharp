@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AdventOfCode_CSharp.Day7
+namespace AdventOfCode_CSharp.Day23
 {
     public class Instruction
     {

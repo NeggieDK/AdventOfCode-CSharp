@@ -1,4 +1,4 @@
-﻿using AdventOfCode_CSharp.Day7;
+﻿using AdventOfCode_CSharp.Day23;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,29 +7,28 @@ using System.Linq;
 
 namespace AdventOfCode_CSharp
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var sw1 = new Stopwatch();
             sw1.Start();
             var result = new List<int>();
             var allPossiblePhases = new List<List<int>>();
-            for(var i=5;i<=9;i++){
-                for(var j=5;j<=9;j++)
+            for (var i = 5; i <= 9; i++)
+            for (var j = 5; j <= 9; j++)
+            {
+                if (j == i) continue;
+                for (var k = 5; k <= 9; k++)
                 {
-                    if (j == i) continue;
-                    for(var k=5;k<=9;k++)
+                    if (k == i || j == k) continue;
+                    for (var l = 5; l <= 9; l++)
                     {
-                        if (k == i || j == k) continue;
-                        for(var l=5;l<=9;l++)
+                        if (l == i || j == l || l == k) continue;
+                        for (var m = 5; m <= 9; m++)
                         {
-                            if (l == i || j == l || l == k) continue;
-                            for(var m=5;m<=9;m++)
-                            {
-                                if (m == i || j == m || l == m || m == k) continue;
-                                allPossiblePhases.Add(new List<int>{i,j,k,l,m});
-                            }
+                            if (m == i || j == m || l == m || m == k) continue;
+                            allPossiblePhases.Add(new List<int> {i, j, k, l, m});
                         }
                     }
                 }
@@ -37,8 +36,24 @@ namespace AdventOfCode_CSharp
 
             var list = new List<long>
             {
-                3,8,1001,8,10,8,105,1,0,0,21,38,55,80,97,118,199,280,361,442,99999,3,9,101,2,9,9,1002,9,5,9,1001,9,4,9,4,9,99,3,9,101,5,9,9,102,2,9,9,1001,9,5,9,4,9,99,3,9,1001,9,4,9,102,5,9,9,101,4,9,9,102,4,9,9,1001,9,4,9,4,9,99,3,9,1001,9,3,9,1002,9,2,9,101,3,9,9,4,9,99,3,9,101,5,9,9,1002,9,2,9,101,3,9,9,1002,9,5,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,99,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,99,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,99,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,99
-
+                3, 8, 1001, 8, 10, 8, 105, 1, 0, 0, 21, 38, 55, 80, 97, 118, 199, 280, 361, 442, 99999, 3, 9, 101, 2, 9,
+                9, 1002, 9, 5, 9, 1001, 9, 4, 9, 4, 9, 99, 3, 9, 101, 5, 9, 9, 102, 2, 9, 9, 1001, 9, 5, 9, 4, 9, 99, 3,
+                9, 1001, 9, 4, 9, 102, 5, 9, 9, 101, 4, 9, 9, 102, 4, 9, 9, 1001, 9, 4, 9, 4, 9, 99, 3, 9, 1001, 9, 3,
+                9, 1002, 9, 2, 9, 101, 3, 9, 9, 4, 9, 99, 3, 9, 101, 5, 9, 9, 1002, 9, 2, 9, 101, 3, 9, 9, 1002, 9, 5,
+                9, 4, 9, 99, 3, 9, 1002, 9, 2, 9, 4, 9, 3, 9, 101, 1, 9, 9, 4, 9, 3, 9, 1002, 9, 2, 9, 4, 9, 3, 9, 101,
+                1, 9, 9, 4, 9, 3, 9, 1001, 9, 2, 9, 4, 9, 3, 9, 102, 2, 9, 9, 4, 9, 3, 9, 1002, 9, 2, 9, 4, 9, 3, 9,
+                1002, 9, 2, 9, 4, 9, 3, 9, 101, 2, 9, 9, 4, 9, 3, 9, 1002, 9, 2, 9, 4, 9, 99, 3, 9, 102, 2, 9, 9, 4, 9,
+                3, 9, 1002, 9, 2, 9, 4, 9, 3, 9, 101, 2, 9, 9, 4, 9, 3, 9, 102, 2, 9, 9, 4, 9, 3, 9, 1002, 9, 2, 9, 4,
+                9, 3, 9, 101, 1, 9, 9, 4, 9, 3, 9, 101, 2, 9, 9, 4, 9, 3, 9, 102, 2, 9, 9, 4, 9, 3, 9, 1002, 9, 2, 9, 4,
+                9, 3, 9, 102, 2, 9, 9, 4, 9, 99, 3, 9, 102, 2, 9, 9, 4, 9, 3, 9, 1002, 9, 2, 9, 4, 9, 3, 9, 102, 2, 9,
+                9, 4, 9, 3, 9, 102, 2, 9, 9, 4, 9, 3, 9, 1001, 9, 2, 9, 4, 9, 3, 9, 101, 2, 9, 9, 4, 9, 3, 9, 101, 1, 9,
+                9, 4, 9, 3, 9, 101, 2, 9, 9, 4, 9, 3, 9, 1001, 9, 2, 9, 4, 9, 3, 9, 102, 2, 9, 9, 4, 9, 99, 3, 9, 1002,
+                9, 2, 9, 4, 9, 3, 9, 101, 2, 9, 9, 4, 9, 3, 9, 1001, 9, 2, 9, 4, 9, 3, 9, 102, 2, 9, 9, 4, 9, 3, 9, 102,
+                2, 9, 9, 4, 9, 3, 9, 1001, 9, 1, 9, 4, 9, 3, 9, 101, 2, 9, 9, 4, 9, 3, 9, 102, 2, 9, 9, 4, 9, 3, 9, 101,
+                2, 9, 9, 4, 9, 3, 9, 1001, 9, 1, 9, 4, 9, 99, 3, 9, 102, 2, 9, 9, 4, 9, 3, 9, 101, 1, 9, 9, 4, 9, 3, 9,
+                1002, 9, 2, 9, 4, 9, 3, 9, 101, 1, 9, 9, 4, 9, 3, 9, 1001, 9, 2, 9, 4, 9, 3, 9, 1002, 9, 2, 9, 4, 9, 3,
+                9, 1002, 9, 2, 9, 4, 9, 3, 9, 1001, 9, 2, 9, 4, 9, 3, 9, 1001, 9, 1, 9, 4, 9, 3, 9, 102, 2, 9, 9, 4, 9,
+                99
             };
             foreach (var phases in allPossiblePhases)
             {
@@ -83,6 +98,7 @@ namespace AdventOfCode_CSharp
                 scheduler.Run();
                 result.Add(scheduler.LastOutput);
             }
+
             Console.WriteLine($"Max output: {result.Max()}");
             sw1.Stop();
             Console.WriteLine($"Execution time: {sw1.ElapsedMilliseconds}");
@@ -107,12 +123,15 @@ public class Scheduler
         WaitingProcesses = new Dictionary<DateTime, int>();
         MemoryPerProcess = new Dictionary<int, int>();
     }
+
     public void Run()
     {
-        while (ActiveProcess.Status == ComputerStatus.Running || ActiveProcess.Status == ComputerStatus.Waiting || WaitingProcesses.Keys.ToList().Any())
-        {
-            if(ActiveProcess.Status == ComputerStatus.Running)
+        while (ActiveProcess.Status == ComputerStatus.Running || ActiveProcess.Status == ComputerStatus.Waiting ||
+               WaitingProcesses.Keys.ToList().Any())
+            if (ActiveProcess.Status == ComputerStatus.Running)
+            {
                 ActiveProcess.Start();
+            }
             else if (ActiveProcess.Status == ComputerStatus.Waiting)
             {
                 SetSharedMemory(ActiveProcess.DumpOutput());
@@ -126,7 +145,7 @@ public class Scheduler
                 ActiveProcess = GetLongestWaitingProcess();
                 ActiveProcess.setInput(GetSharedMemory(ActiveProcess.Identifier));
             }
-        }
+
         LastOutput = ActiveProcess.DumpOutput().Item1;
     }
 
@@ -137,10 +156,11 @@ public class Scheduler
         MemoryPerProcess.Remove(identifier);
         return value;
     }
+
     private void SetSharedMemory(Tuple<int, int> value)
     {
         if (value == null) return;
-       // LastOutput = value.Item1;
+        // LastOutput = value.Item1;
         MemoryPerProcess[value.Item2] = value.Item1;
     }
 

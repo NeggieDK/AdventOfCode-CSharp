@@ -8,13 +8,10 @@ namespace AdventOfCode_CSharp.Day17Objects
         public List<List<string>> Patterns { get; set; }
         public List<string> Input { get; set; }
         public int StartingIndex { get; set; }
+
         public bool AllPatternsFound
         {
-            get
-            {
-                return Input.All(i => i == null);
-            }
+            get { return Input.All(i => i == null); }
         }
-
     }
 }
