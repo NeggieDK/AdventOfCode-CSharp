@@ -3,7 +3,8 @@
     public enum ComputerStatus
     {
         Running,
-        Halted,
-        Waiting
+        EmptyQueue,
+        Output,
+        Halted
     }
 }
