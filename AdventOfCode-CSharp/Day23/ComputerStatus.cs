@@ -4,6 +4,7 @@
     {
         Running,
         EmptyQueue,
+        Input,
         Output,
         Halted
     }
