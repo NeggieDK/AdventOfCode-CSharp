@@ -115,5 +115,16 @@ namespace AdventOfCode_CSharp
             newList[newList.Count - 1] = 10;
             return newList;
         }
+
+        public static string ConvertToString(this List<long> input)
+        {
+            var stringOutput = string.Empty;
+            foreach (var el in input)
+            {
+                stringOutput += (char)el;
+            }
+
+            return stringOutput;
+        }
     }
 }
